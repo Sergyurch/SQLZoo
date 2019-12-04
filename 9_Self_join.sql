@@ -56,3 +56,23 @@ JOIN route y ON (x.company = y.company AND x.num = y.num)
 JOIN stops stopa ON (x.stop = stopa.id)
 JOIN stops stopb ON (y.stop = stopb.id)
 WHERE x.company = 'LRT' AND stopa.name = 'Craiglockhart';
+
+/*10.Find the routes involving two buses that can go from Craiglockhart to Lochend.
+Show the bus no. and company for the first bus, the name of the stop for the transfer,
+and the bus no. and company for the second bus.*/
+SELECT start.num, start.company, start.name, finish.num, finish.company
+FROM
+ (SELECT x.num, x.company, stopy.name
+  FROM route x 
+  JOIN route y ON (x.company = y.company AND x.num = y.num)
+  JOIN stops stopx ON (x.stop=stopx.id)
+  JOIN stops stopy ON (y.stop=stopy.id)
+  WHERE stopx.name = 'Craiglockhart') AS start
+JOIN
+ (SELECT stopy.name, z.num, z.company
+  FROM route y 
+  JOIN route z ON (y.company = z.company AND y.num = z.num)
+  JOIN stops stopy ON (y.stop=stopy.id)
+  JOIN stops stopz ON (z.stop=stopz.id)
+  WHERE stopz.name = 'Lochend') AS finish
+ON (start.name = finish.name)
